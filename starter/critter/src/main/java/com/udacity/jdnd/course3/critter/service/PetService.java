@@ -41,10 +41,6 @@ public class PetService {
         return petRepository.findById(id).orElse(null);
     }
 
-    public List<Pet> getPetsByOwnerId(Long id) {
-        return petRepository.getPetsByOwner_Id(id);
-    }
-
     public List<Pet> getAllPets() {
         return petRepository.findAll();
     }
@@ -59,7 +55,4 @@ public class PetService {
         return petRepository.getPetsByOwner_Id(ownerId);
     }
 
-    public Customer getOwnerByPetId(Long id) {
-        return petRepository.getOwnerForPet(id);
-    }
 }

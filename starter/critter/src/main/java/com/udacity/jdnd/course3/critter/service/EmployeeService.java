@@ -51,17 +51,10 @@ public class EmployeeService {
         return employeeList;
     }
 
-    public List<Schedule> findAllSchedulesByEmployeeId(Long id) {
-        return employeeRepository.findAllSchedulesByEmployeeId(id);
-    }
-
     public List<Employee> getEmployeesByScheduleId(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
         return schedule.getEmployees();
     }
-
-
-
 
 }
