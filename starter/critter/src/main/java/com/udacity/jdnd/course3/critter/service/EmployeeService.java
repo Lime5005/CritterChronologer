@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -26,7 +27,7 @@ public class EmployeeService {
     }
 
     public Employee getEmployeeById(Long id) {
-        return employeeRepository.findById(id).orElse(null);
+        return employeeRepository.getOne(id);
     }
 
     public void setDaysAvailable(Long id, Set<DayOfWeek> daysAvailable) {
@@ -39,9 +40,15 @@ public class EmployeeService {
         }
     }
 
-    public Set<Employee> findAvailableEmployees(Set<EmployeeSkill> skills, DayOfWeek days) {
-        return employeeRepository.findAllBySkillsInAndDaysAvailableContains(skills, days);
-
+    public List<Employee> findAvailableEmployees(Set<EmployeeSkill> skills, DayOfWeek days) {
+        List<Employee> employees = employeeRepository.findAllBySkillsInAndDaysAvailableContains(skills, days);
+        List<Employee> employeeList = new LinkedList<>();
+        employees.forEach(thisEmployee -> {
+            if(thisEmployee.getSkills().containsAll(skills)) {
+                employeeList.add(thisEmployee);
+            }
+        });
+        return employeeList;
     }
 
     public List<Schedule> findAllSchedulesByEmployeeId(Long id) {
@@ -49,8 +56,9 @@ public class EmployeeService {
     }
 
     public List<Employee> getEmployeesByScheduleId(Long id) {
-        Optional<Schedule> schedule = scheduleRepository.findById(id);
-        return schedule.map(Schedule::getEmployees).orElse(null);
+        Schedule schedule = scheduleRepository.findById(id)
+                .orElseThrow(ResourceNotFoundException::new);
+        return schedule.getEmployees();
     }
 
 

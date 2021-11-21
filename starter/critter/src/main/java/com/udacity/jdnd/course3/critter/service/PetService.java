@@ -19,9 +19,6 @@ public class PetService {
     private PetRepository petRepository;
 
     @Autowired
-    private CustomerService customerService;
-
-    @Autowired
     private CustomerRepository customerRepository;
 
     @Autowired
@@ -31,7 +28,7 @@ public class PetService {
         Pet savedPet = petRepository.save(pet);
         Customer owner = savedPet.getOwner();
         List<Pet> pets = owner.getPets();
-        if (pets.isEmpty()) {
+        if (pets == null) {
             pets = new ArrayList<>();
         }
         pets.add(savedPet);
@@ -53,8 +50,13 @@ public class PetService {
     }
 
     public List<Pet> getPetsByScheduleId(Long id) {
-        Optional<Schedule> optionalSchedule = scheduleRepository.findById(id);
-        return optionalSchedule.map(Schedule::getPets).orElse(null);
+        Schedule schedule = scheduleRepository.findById(id)
+                .orElseThrow(ResourceNotFoundException::new);
+
+        return schedule.getPets();
+    }
+    public List<Pet> getPetsByOwner(Long ownerId){
+        return petRepository.getPetsByOwner_Id(ownerId);
     }
 
     public Customer getOwnerByPetId(Long id) {
