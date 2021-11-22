@@ -9,17 +9,16 @@ import com.udacity.jdnd.course3.critter.repository.PetRepository;
 import com.udacity.jdnd.course3.critter.repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class ScheduleService {
     @Autowired
     private ScheduleRepository scheduleRepository;
-
-    @Autowired
-    private CustomerRepository customerRepository;
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -41,12 +40,12 @@ public class ScheduleService {
 
     public List<Schedule> getSchedulesForCustomer(Long id) {
         Optional<Pet> optionalPet = petRepository.findById(id);
-        return optionalPet.map(pet -> scheduleRepository.getSchedulesByPetsContains(pet)).orElse(null);
+        return optionalPet.map(pet -> scheduleRepository.getSchedulesByPetsContains(pet)).orElseThrow(ResourceNotFoundException::new);
     }
 
     public List<Schedule> getSchedulesForEmployee(Long id) {
         Optional<Employee> optionalEmployee = employeeRepository.findById(id);
-        return optionalEmployee.map(employee -> scheduleRepository.getSchedulesByEmployeesContains(employee)).orElse(null);
+        return optionalEmployee.map(employee -> scheduleRepository.getSchedulesByEmployeesContains(employee)).orElseThrow(ResourceNotFoundException::new);
     }
 
 }

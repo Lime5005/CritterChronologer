@@ -8,12 +8,13 @@ import com.udacity.jdnd.course3.critter.repository.PetRepository;
 import com.udacity.jdnd.course3.critter.repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@Transactional
 public class PetService {
     @Autowired
     private PetRepository petRepository;
@@ -38,7 +39,7 @@ public class PetService {
     }
 
     public Pet findById(Long id) {
-        return petRepository.findById(id).orElse(null);
+        return petRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
     public List<Pet> getAllPets() {
@@ -48,9 +49,9 @@ public class PetService {
     public List<Pet> getPetsByScheduleId(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
-
         return schedule.getPets();
     }
+
     public List<Pet> getPetsByOwner(Long ownerId){
         return petRepository.getPetsByOwner_Id(ownerId);
     }
